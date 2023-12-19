@@ -1,4 +1,5 @@
 import vine from "@vinejs/vine";
+import createValidator from ".";
 
 const registerSchema = vine.object({
   username: vine.string().trim().minLength(3).maxLength(15),
@@ -6,4 +7,4 @@ const registerSchema = vine.object({
   password: vine.string().minLength(6).maxLength(20).confirmed(),
 });
 
-export const registerValidator = vine.compile(registerSchema);
+export const registerValidator = createValidator(registerSchema); //vine.compile(registerSchema);
