@@ -1,5 +1,5 @@
 import vine from "@vinejs/vine";
-import createValidator from ".";
+import { ErrorReporter } from "./ErrorReporter";
 
 const registerSchema = vine.object({
   username: vine.string().trim().minLength(3).maxLength(15),
@@ -7,4 +7,7 @@ const registerSchema = vine.object({
   password: vine.string().minLength(6).maxLength(20).confirmed(),
 });
 
-export const registerValidator = createValidator(registerSchema); //vine.compile(registerSchema);
+let registerValidator = vine.compile(registerSchema);
+registerValidator.errorReporter = () => new ErrorReporter();
+
+export default registerValidator;

@@ -1,5 +1,6 @@
 import connect from "@/db";
-import { registerValidator } from "@/validators/authSchema";
+import User from "@/models/User";
+import { registerValidator } from "@/validators";
 import { errors } from "@vinejs/vine";
 import bcrypt from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
@@ -13,12 +14,21 @@ export const POST = async (request: NextRequest) => {
     // Validate data with vine
     let validatedData = await registerValidator.validate(data);
 
+    // Check if user already exists
+    const userExists = await User.findOne({ email: validatedData.email });
+    if (userExists) {
+      return NextResponse.json({
+        message: "Email is already taken",
+        status: 409,
+      });
+    }
+
     // Generate salt
     const salt = bcrypt.genSaltSync(10);
     validatedData.password = bcrypt.hashSync(validatedData.password, salt);
 
-    console.log(validatedData);
-    return NextResponse.json({ data: validatedData, status: 200 });
+    const user = await User.create(validatedData);
+    return NextResponse.json({ data: user, status: 200 });
   } catch (error) {
     if (error instanceof errors.E_VALIDATION_ERROR) {
       console.log(error.messages);
