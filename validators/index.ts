@@ -1,3 +1,4 @@
-import registerValidator from "./authSchema";
+import registerValidator from "./registerSchema";
+import loginValidator from "./loginSchema";
 
-export { registerValidator };
+export { registerValidator, loginValidator };

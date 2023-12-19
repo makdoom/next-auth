@@ -28,7 +28,10 @@ export const POST = async (request: NextRequest) => {
     validatedData.password = bcrypt.hashSync(validatedData.password, salt);
 
     const user = await User.create(validatedData);
-    return NextResponse.json({ data: user, status: 200 });
+    return NextResponse.json({
+      data: { username: user.username, email: user.email },
+      status: 200,
+    });
   } catch (error) {
     if (error instanceof errors.E_VALIDATION_ERROR) {
       console.log(error.messages);
