@@ -2,28 +2,26 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { User } from "@/types/user.types";
+import { RegisterErrorType, User } from "@/types/user.types";
 import axios from "axios";
 import { Loader } from "lucide-react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { redirect, useRouter } from "next/navigation";
 import { ChangeEvent, useState } from "react";
-
-type RegisterErrorMessageType = {
-  username?: string;
-  email?: string;
-  password?: string;
-};
 
 const Register = () => {
   const [user, setUser] = useState<User>({} as User);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<RegisterErrorMessageType>({});
+  const [error, setError] = useState<RegisterErrorType>({});
+
+  const session = useSession();
+  const router = useRouter();
 
   const handleUserChange = (event: ChangeEvent<HTMLInputElement>) =>
     setUser((prev) => ({ ...prev, [event.target.name]: event.target.value }));
 
   const handleRegister = async () => {
-    console.log(user);
     setIsLoading(true);
     try {
       const response = await axios.post("/api/auth/register", {
@@ -40,10 +38,15 @@ const Register = () => {
       }
 
       setError({});
+      router.push("/login");
     } catch (error) {
       console.log(error);
+      setIsLoading(false);
     }
   };
+
+  console.log(session);
+  if (session.data) return redirect("/");
 
   return (
     <div className="h-full w-full flex justify-center items-center flex-1">

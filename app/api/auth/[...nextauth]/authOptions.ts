@@ -1,3 +1,5 @@
+import connect from "@/db";
+import User from "@/models/User";
 import { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
@@ -13,7 +15,9 @@ export const authOptions: AuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
-        const user = { id: "1", name: "J Smith", email: credentials?.email };
+        connect();
+
+        const user = await User.findOne({ email: credentials?.email }); //{ id: "1", name: "J Smith", email: credentials?.email };
         if (user) return user;
         return null;
       },
