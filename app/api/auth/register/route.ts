@@ -37,5 +37,12 @@ export const POST = async (request: NextRequest) => {
       console.log(error.messages);
       return NextResponse.json({ message: error.messages, status: 400 });
     }
+
+    console.log(error);
+    return NextResponse.json({
+      message: "Something went wrong with the API",
+      error: error,
+      status: 400,
+    });
   }
 };
